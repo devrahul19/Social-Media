@@ -24,7 +24,7 @@ exports.createBlog = (req, res) => {
         };
         blogs.push(newBlog);
         saveBlogData();
-        res.status(201).send('Blog created successfully');
+        res.status(201).send('Blog created Successsfully!! :D');
     } catch (err) {
         res.status(403).send('Invalid token');
     }
