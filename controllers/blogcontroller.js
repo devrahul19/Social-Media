@@ -3,7 +3,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 
 const blogFilePath = path.join(__dirname, '../blogs.json');
-let blogs = JSON.parse(fs.readFileSync(blogFilePath, 'utf-8') || '[]');
+let blogs = JSON.parse(fs.readFileSync(blogFilePath, 'utf-8') || '[]');  
 const JWT_SECRET = "superSecretJWTKey123!";
 
 const saveBlogData = () => fs.writeFileSync(blogFilePath, JSON.stringify(blogs, null, 2), 'utf-8');
@@ -16,6 +16,7 @@ exports.createBlog = (req, res) => {
         const user = JSON.parse(fs.readFileSync(path.join(__dirname, '../users.json'), 'utf-8')).find(u => u.id === decoded.id);
         if (!user) return res.status(403).send('Unauthorized');
 
+        
         const newBlog = {
             id: blogs.length + 1,
             title,

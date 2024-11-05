@@ -17,9 +17,20 @@ exports.registerUser = async (req, res) => {
     if (existingUser) return res.status(400).send('User already exists');
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = { id: users.length + 1, email, password: hashedPassword, registered: true };
+    
+    // Assign the role based on whether this is the first user
+    const role = users.length === 0 ? 'admin' : 'user';
+
+    const newUser = { 
+        id: users.length + 1, 
+        email, 
+        password: hashedPassword, 
+        registered: true, 
+        role 
+    };
     users.push(newUser);
     saveData();
+    
     return res.status(201).send('User registered successfully');
 };
 
@@ -32,6 +43,6 @@ exports.loginUser = async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(400).send('Invalid password');
 
-    const token = jwt.sign({ id: user.id, role: 'user' }, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
 };

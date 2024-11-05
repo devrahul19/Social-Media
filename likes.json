@@ -1,0 +1,45 @@
+[
+  {
+    "blogId": 1,
+    "likesCount": 2,
+    "likes": [
+      {
+        "likeId": 1,
+        "userId": 1,
+        "date": "2023-08-10T14:32:00.000Z"
+      },
+      {
+        "likeId": 2,
+        "userId": 2,
+        "date": "2023-08-10T15:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "blogId": 2,
+    "likesCount": 2,
+    "likes": [
+      {
+        "likeId": 3,
+        "userId": 3,
+        "date": "2023-08-11T10:20:00.000Z"
+      },
+      {
+        "likeId": 4,
+        "userId": 1,
+        "date": "2023-08-12T09:15:00.000Z"
+      }
+    ]
+  },
+  {
+    "blogId": 3,
+    "likesCount": 1,
+    "likes": [
+      {
+        "likeId": 5,
+        "userId": 2,
+        "date": "2023-08-13T08:00:00.000Z"
+      }
+    ]
+  }
+]

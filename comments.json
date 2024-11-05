@@ -1,1 +1,58 @@
-[]
+[
+  {
+    "commentId": 1,
+    "blogId": 1,
+    "userId": 1,
+    "comment": "Great post! Really enjoyed reading it.",
+    "parentCommentId": null,
+    "date": "2023-08-10T14:32:00.000Z"
+  },
+  {
+    "commentId": 2,
+    "blogId": 1,
+    "userId": 2,
+    "comment": "Thank you! Glad you liked it.",
+    "parentCommentId": 1,
+    "date": "2023-08-10T15:00:00.000Z"
+  },
+  {
+    "commentId": 3,
+    "blogId": 2,
+    "userId": 3,
+    "comment": "Interesting take on Node.js, thanks for sharing.",
+    "parentCommentId": null,
+    "date": "2023-08-11T10:20:00.000Z"
+  },
+  {
+    "commentId": 4,
+    "blogId": 2,
+    "userId": 1,
+    "comment": "I found this helpful as well, thanks!",
+    "parentCommentId": null,
+    "date": "2023-08-12T09:15:00.000Z"
+  },
+  {
+    "commentId": 5,
+    "blogId": 1,
+    "userId": 2,
+    "comment": "You're welcome! Feel free to reach out if you have questions.",
+    "parentCommentId": 2,
+    "date": "2023-08-12T16:45:00.000Z"
+  },
+  {
+    "commentId": 6,
+    "blogId": 3,
+    "userId": 1,
+    "comment": "Thanks for the insights on JWTs, very useful.",
+    "parentCommentId": null,
+    "date": "2023-08-13T08:00:00.000Z"
+  },
+  {
+    "commentId": 7,
+    "blogId": 2,
+    "userId": 1,
+    "comment": "This is a test comment",
+    "parentCommentId": null,
+    "date": "2024-11-05T04:41:03.017Z"
+  }
+]
