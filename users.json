@@ -12,5 +12,12 @@
     "password": "$2a$10$9z/jVej.rW5b.M.34SaRa.hB/Sd8.BY1HYJl.3EDnOqn0sEGavZBa",
     "registered": true,
     "role": "user"
+  },
+  {
+    "id": 3,
+    "email": "khushi@gmail.com",
+    "password": "$2a$10$Rp5YUBLD7f9WuJ/ymiRhBuNeWGvIGWoYkPBww2Uc/JerSOHB.Ljii",
+    "registered": true,
+    "role": "user"
   }
 ]

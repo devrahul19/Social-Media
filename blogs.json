@@ -16,5 +16,11 @@
     "title": "Understanding JWT Authentication",
     "content": "JWT is a secure way to handle authentication in web applications.",
     "authorId": 1
+  },
+  {
+    "id": 4,
+    "title": "Khushi's BLog",
+    "content": "HEY THERE!! MY NAME IS KHUSHI.I AM WRITING THE BLOG ON FASHION AS I DISCUSSED THIS YESTERDAY WITH RAHUL",
+    "authorId": 3
   }
 ]
