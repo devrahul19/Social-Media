@@ -1,43 +1,126 @@
 const fs = require('fs');
 const path = require('path');
-const jwt = require('jsonwebtoken');
 
-const commentFilePath = path.join(__dirname, '../comments.json');
-let comments = JSON.parse(fs.readFileSync(commentFilePath, 'utf-8') || '[]');
-const JWT_SECRET = "superSecretJWTKey123!";
+// File path for the blogs JSON file
+const blogsFilePath = path.join(__dirname, '../blogs.json');
+let blogs = JSON.parse(fs.readFileSync(blogsFilePath, 'utf-8') || '[]');
 
-const saveCommentData = () => fs.writeFileSync(commentFilePath, JSON.stringify(comments, null, 2), 'utf-8');
+// Helper function to save blogs data to blogs.json
+const saveBlogsData = () => fs.writeFileSync(blogsFilePath, JSON.stringify(blogs, null, 2), 'utf-8');
 
-exports.addComment = (req, res) => {
-    const { token, comment, parentCommentId } = req.body;
-    const blogId = parseInt(req.params.id, 10);
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const user = JSON.parse(fs.readFileSync(path.join(__dirname, '../users.json'), 'utf-8')).find(u => u.id === decoded.id);
-        if (!user) return res.status(403).send('Unauthorized');
-
-        const newComment = {
-            commentId: comments.length + 1,
-            blogId: blogId,
-            userId: user.id,
-            comment: comment,
-            parentCommentId: parentCommentId || null,
-            date: new Date().toISOString()
-        };
-
-        comments.push(newComment);
-        saveCommentData();
-        res.status(201).send('Comment added successfully');
-    } catch (err) {
-        res.status(403).send('Invalid token');
-    }
+// Helper function to get the next unique commentId
+const getNextCommentId = (comments) => {
+    let maxId = 0;
+    const traverse = (commentsList) => {
+        for (let comment of commentsList) {
+            if (comment.commentId > maxId) maxId = comment.commentId;
+            if (comment.replies && comment.replies.length > 0) {
+                traverse(comment.replies);
+            }
+        }
+    };
+    traverse(comments);
+    return maxId + 1;
 };
 
-exports.getComments = (req, res) => {
-    const blogId = parseInt(req.params.id, 10);
-    const blogComments = comments.filter(comment => comment.blogId === blogId);
+// Helper function to find a comment recursively
+const findComment = (comments, commentId) => {
+    for (let comment of comments) {
+        if (comment.commentId === commentId) {
+            return comment;
+        }
+        if (comment.replies && comment.replies.length > 0) {
+            const found = findComment(comment.replies, commentId);
+            if (found) return found;
+        }
+    }
+    return null;
+};
 
-    if (blogComments.length === 0) return res.status(404).send('No comments found for this blog');
-    res.status(200).json(blogComments);
+// Helper function to delete a comment recursively
+const deleteCommentRecursive = (comments, commentId, userId) => {
+    for (let i = 0; i < comments.length; i++) {
+        const comment = comments[i];
+        if (comment.commentId === commentId) {
+            if (comment.userId !== userId) {
+                return false; // Not authorized
+            }
+            comments.splice(i, 1);
+            return true;
+        }
+        if (comment.replies && comment.replies.length > 0) {
+            const deleted = deleteCommentRecursive(comment.replies, commentId, userId);
+            if (deleted) return true;
+        }
+    }
+    return false;
+};
+
+// Add a comment or reply to a blog post
+exports.addComment = (req, res) => {
+    const blogId = parseInt(req.params.blogId, 10);
+    const { text, parentCommentId } = req.body;
+
+    if (!text) return res.status(400).send('Comment text is required');
+
+    const blog = blogs.find(b => b.id === blogId);
+    if (!blog) return res.status(404).send('Blog not found');
+
+    const userId = req.user ? req.user.id : 1; // Default to user ID 1 for testing
+
+    const newComment = {
+        commentId: getNextCommentId(blog.comments),
+        blogId,
+        userId,
+        text,
+        parentCommentId: parentCommentId || null,
+        createdAt: new Date().toISOString()
+    };
+
+    if (parentCommentId) {
+        const parentComment = findComment(blog.comments, parentCommentId);
+        if (!parentComment) return res.status(404).send('Parent comment not found');
+
+        if (!parentComment.replies) parentComment.replies = [];
+        parentComment.replies.push(newComment);
+    } else {
+        blog.comments.push(newComment);
+    }
+
+    saveBlogsData();
+    return res.status(201).json(newComment);
+};
+
+// Add a reply to a specific comment on a blog post
+exports.addReply = (req, res) => {
+    req.body.parentCommentId = parseInt(req.params.commentId, 10);
+    return this.addComment(req, res);
+};
+
+// Get all comments for a blog post, including nested replies
+exports.getComments = (req, res) => {
+    const blogId = parseInt(req.params.blogId, 10);
+    const blog = blogs.find(b => b.id === blogId);
+
+    if (!blog) return res.status(404).send('Blog not found');
+
+    res.json(blog.comments);
+};
+
+// Delete a comment or reply by ID
+exports.deleteComment = (req, res) => {
+    const blogId = parseInt(req.params.blogId, 10);
+    const commentId = parseInt(req.params.commentId, 10);
+
+    const blog = blogs.find(b => b.id === blogId);
+    if (!blog) return res.status(404).send('Blog not found');
+
+    const deleted = deleteCommentRecursive(blog.comments, commentId, req.user.id);
+
+    if (!deleted) {
+        return res.status(404).send('Comment not found or not authorized to delete');
+    }
+
+    saveBlogsData();
+    return res.status(200).send('Comment deleted successfully');
 };

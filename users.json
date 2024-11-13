@@ -11,13 +11,80 @@
     "email": "rahuldh@gmail.com",
     "password": "$2a$10$9z/jVej.rW5b.M.34SaRa.hB/Sd8.BY1HYJl.3EDnOqn0sEGavZBa",
     "registered": true,
-    "role": "user"
+    "role": "user",
+    "followers": [
+      4,
+      {
+        "id": 6,
+        "email": "rahul23@gmail.com"
+      }
+    ],
+    "following": [],
+    "private": false,
+    "followRequests": []
   },
   {
     "id": 3,
     "email": "khushi@gmail.com",
     "password": "$2a$10$Rp5YUBLD7f9WuJ/ymiRhBuNeWGvIGWoYkPBww2Uc/JerSOHB.Ljii",
     "registered": true,
-    "role": "user"
+    "role": "user",
+    "followers": [
+      4
+    ],
+    "following": [
+      2
+    ],
+    "private": false,
+    "followRequests": []
+  },
+  {
+    "id": 4,
+    "email": "testuser@example.com",
+    "password": "$2a$10$Nk26NEVavPbUOs5TgdSQn.e9FQeRqtIgZoSIOKZHh8t49uCjkpyB.",
+    "registered": true,
+    "role": "user",
+    "followers": [
+      6
+    ],
+    "following": [
+      2,
+      3
+    ],
+    "private": false,
+    "followRequests": []
+  },
+  {
+    "id": 5,
+    "email": "geazy@gmail.com",
+    "password": "$2a$10$KbTb0190pNens0pwZmRFGe.cjnOdfiIe6aAcn0Qc2KRIBrBLjKVWm",
+    "registered": true,
+    "role": "user",
+    "followers": [
+      6
+    ],
+    "following": [],
+    "private": false,
+    "followRequests": []
+  },
+  {
+    "id": 6,
+    "email": "rahul23@gmail.com",
+    "password": "$2a$10$Gyt.oS1DF/xeScEjvv.niu5Sa5QCG/lnSSwpWnruOAPkJC9QjU9sq",
+    "registered": true,
+    "role": "user",
+    "followers": [],
+    "following": [
+      5,
+      4,
+      {
+        "id": 2,
+        "email": "rahuldh@gmail.com"
+      }
+    ],
+    "private": true,
+    "followRequests": [
+      5
+    ]
   }
 ]

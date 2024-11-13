@@ -7,17 +7,18 @@ const userFilePath = path.join(__dirname, '../users.json');
 let users = JSON.parse(fs.readFileSync(userFilePath, 'utf-8') || '[]');
 const JWT_SECRET = "superSecretJWTKey123!";
 
+// Helper function to save user data to users.json
 const saveData = () => fs.writeFileSync(userFilePath, JSON.stringify(users, null, 2), 'utf-8');
 
+// Register user function
 exports.registerUser = async (req, res) => {
-    const { email, password, public } = req.body;
-    if (!email || !password || public === undefined) return res.status(400).send('Please provide all details');
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).send('Please provide all details');
 
     const existingUser = users.find(user => user.email === email);
     if (existingUser) return res.status(400).send('User already exists');
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    
     const role = users.length === 0 ? 'admin' : 'user';
 
     const newUser = { 
@@ -25,8 +26,11 @@ exports.registerUser = async (req, res) => {
         email, 
         password: hashedPassword, 
         registered: true, 
-        role,
-        public // Setting profile visibility during registration
+        role, 
+        followers: [],
+        following: [],
+        private: false,
+        followRequests: []
     };
     users.push(newUser);
     saveData();
@@ -34,6 +38,7 @@ exports.registerUser = async (req, res) => {
     return res.status(201).send('User registered successfully');
 };
 
+// Login user function
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
     let user = users.find(user => user.email === email);
@@ -47,47 +52,31 @@ exports.loginUser = async (req, res) => {
     res.json({ token });
 };
 
-// Update Profile Visibility Endpoint
-exports.updateProfileVisibility = (req, res) => {
-    const { token, public } = req.body;
+// Update user privacy settings
+exports.updatePrivacy = (req, res) => {
+    const { private } = req.body;
+    const user = users.find(u => u.id === req.user.id);
+    if (!user) return res.status(404).send('User not found');
 
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
-
-        const user = users.find(u => u.id === userId);
-        if (!user) return res.status(404).send('User not found');
-
-        user.public = public;
-        saveData();
-        res.status(200).send(`Profile visibility updated to ${public ? 'public' : 'private'}`);
-    } catch (err) {
-        res.status(403).send('Invalid token');
-    }
+    user.private = private;
+    saveData();
+    return res.status(200).send('Privacy setting updated');
 };
 
+// Get user profile with follow check
 exports.getProfile = (req, res) => {
-    const { token } = req.body;
     const userIdToView = parseInt(req.params.id, 10);
+    const userToView = users.find(u => u.id === userIdToView);
 
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        const userId = decoded.id;
+    if (!userToView) return res.status(404).send('User not found');
 
-        const userToView = users.find(u => u.id === userIdToView);
-        if (!userToView) return res.status(404).send('User not found');
-
-        const isFollowing = followers.some(f => f.userId === userIdToView && f.followerId === userId);
-        if (!userToView.public && !isFollowing && userToView.id !== userId) {
-            return res.status(403).send('This profile is private');
-        }
-
-        res.status(200).json({
-            id: userToView.id,
-            email: userToView.email,
-            public: userToView.public
-        });
-    } catch (err) {
-        res.status(403).send('Invalid token');
+    if (userToView.private && userToView.id !== req.user.id && !userToView.followers.includes(req.user.id)) {
+        return res.status(403).send('This profile is private');
     }
+
+    res.status(200).json({
+        id: userToView.id,
+        email: userToView.email,
+        public: !userToView.private
+    });
 };

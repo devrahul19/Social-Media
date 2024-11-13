@@ -22,5 +22,47 @@
     "title": "Khushi's BLog",
     "content": "HEY THERE!! MY NAME IS KHUSHI.I AM WRITING THE BLOG ON FASHION AS I DISCUSSED THIS YESTERDAY WITH RAHUL",
     "authorId": 3
+  },
+  {
+    "id": 5,
+    "title": "smile",
+    "content": "horror movie",
+    "authorId": 5,
+    "createdAt": "2024-11-13T04:56:05.677Z",
+    "comments": [
+      {
+        "commentId": 1,
+        "userId": 5,
+        "text": "This is a nice Movie!",
+        "createdAt": "2024-11-13T05:03:20.875Z"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "smile2",
+    "content": " Best horror movie",
+    "authorId": 5,
+    "createdAt": "2024-11-13T05:12:18.210Z",
+    "comments": [
+      {
+        "commentId": 1,
+        "blogId": 6,
+        "userId": 1,
+        "text": "Kinda Horror! :(",
+        "parentCommentId": null,
+        "createdAt": "2024-11-13T05:17:18.767Z",
+        "replies": [
+          {
+            "commentId": 2,
+            "blogId": 6,
+            "userId": 1,
+            "text": "YESS!!",
+            "parentCommentId": 1,
+            "createdAt": "2024-11-13T05:17:51.809Z"
+          }
+        ]
+      }
+    ]
   }
 ]

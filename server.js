@@ -1,39 +1,38 @@
 const express = require("express");
+const userController = require("./controllers/userController");
+const followController = require("./controllers/followController");
+const likeController = require("./controllers/likeController");
+const blogController = require("./controllers/blogController");
+const commentController = require("./controllers/commentController");
+const authMiddleware = require("./middleware/authMiddleware");
+const PORT = 3000;
 const app = express();
-
 app.use(express.json());
 
-const port = 3000;
-
-// Import controllers
-const userController = require("./controllers/usercontroller");
-const likeController = require("./controllers/likecontroller");
-const blogController = require("./controllers/blogcontroller");
-const commentController = require("./controllers/commentcontroller");
-
-// User
-app.get("/", (req, res) => res.send("WELCOME TO MY BOOK"));
+// Public routes
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
-app.get('/users/:id/profile', userController.getProfile);
+app.get("/blogs", blogController.getAllBlogs); // Public access to view all blogs
+app.get("/blogs/:id", blogController.getBlogById); // Public access to view a specific blog
+app.get("/blogs/:blogId/comments", commentController.getComments); // Public access to view comments on a blog
+
+// Protected routes Working
+app.post("/blogs", authMiddleware, blogController.createBlog);
+app.put("/blogs/:id", authMiddleware, blogController.updateBlog);
+app.delete("/blogs/:id", authMiddleware, blogController.deleteBlog);
+
+//Working
+app.post("/blogs/:blogId/comments", commentController.addComment); // Add a root-level comment
+app.post("/blogs/:blogId/comments/:commentId/reply", commentController.addReply); // Add a reply to a specific comment
+app.delete("/blogs/:blogId/comments/:commentId", commentController.deleteComment); // Delete a comment or reply by ID
 
 
-// Blogs
-app.post("/blog/create", blogController.createBlog);
-app.put("/blog/update/:id", blogController.updateBlog);
-app.delete("/blog/delete/:id", blogController.deleteBlog);
-// COmments
-app.post("/blog/:id/comment", commentController.addComment);
-app.get("/blog/:id/comments", commentController.getComments);
+app.post("/follow/:id", authMiddleware, followController.followUser);
+app.post("/follow/approve", authMiddleware, followController.approveFollowRequest);
+app.post("/follow/reject", authMiddleware, followController.rejectFollowRequest);
+app.post("/privacy", authMiddleware, userController.updatePrivacy);
 
-// Likes
-app.post("/blog/:id/like",likeController.likeBlog);
-app.delete("/blog/:id/unlike",likeController.unlikeBlog);
+app.post("/like/:id", authMiddleware, likeController.likeBlog);
+app.delete("/like/:id", authMiddleware, likeController.unlikeBlog);
 
-// Follow
-app.post('/users/:id/follow', followUnfollowController.followUser);
-app.delete('/users/:id/unfollow', followUnfollowController.unfollowUser);
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
