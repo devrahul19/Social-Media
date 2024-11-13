@@ -29,14 +29,17 @@
     "password": "$2a$10$Rp5YUBLD7f9WuJ/ymiRhBuNeWGvIGWoYkPBww2Uc/JerSOHB.Ljii",
     "registered": true,
     "role": "user",
-    "followers": [
-      4
-    ],
+    "followers": [],
     "following": [
       2
     ],
-    "private": false,
-    "followRequests": []
+    "private": true,
+    "followRequests": [
+      {
+        "id": 6,
+        "email": "rahul23@gmail.com"
+      }
+    ]
   },
   {
     "id": 4,

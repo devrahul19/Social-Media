@@ -28,6 +28,7 @@ app.delete("/blogs/:blogId/comments/:commentId", commentController.deleteComment
 
 
 app.post("/follow/:id", authMiddleware, followController.followUser);
+app.post("/unfollow/:id", authMiddleware, followController.unfollowUser);
 app.post("/follow/approve", authMiddleware, followController.approveFollowRequest);
 app.post("/follow/reject", authMiddleware, followController.rejectFollowRequest);
 app.post("/privacy", authMiddleware, userController.updatePrivacy);
